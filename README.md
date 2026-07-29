@@ -4,10 +4,15 @@ Fail-safe request analytics for Laravel APIs. The SDK records normalized route
 metrics and customer integration context without capturing request or response
 bodies, credentials, cookies, query strings, IP addresses, or personal data.
 
+## Requirements
+
+- PHP 8.2, 8.3 or 8.4
+- Laravel 11 or 12
+
 ## Installation
 
 ```bash
-composer require tracium/laravel
+composer require tracium/laravel:^0.1
 php artisan vendor:publish --tag=tracium-config
 ```
 
