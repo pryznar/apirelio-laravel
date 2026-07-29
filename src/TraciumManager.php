@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace Tracium\Laravel;
 
 use Closure;
-use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
+use Tracium\Core\Data\EventContext;
+use Tracium\Core\ErrorCodeExtractor;
+use Tracium\Core\EventFactory;
+use Tracium\Core\MetadataSanitizer;
 use Tracium\Laravel\Contracts\EventTransport;
 use Tracium\Laravel\Data\TraciumApplication;
 use Tracium\Laravel\Data\TraciumCustomer;
@@ -31,6 +33,9 @@ final class TraciumManager
         private readonly Repository $config,
         private readonly EventTransport $transport,
         private readonly RouteNormalizer $routes,
+        private readonly EventFactory $events = new EventFactory(),
+        private readonly MetadataSanitizer $metadata = new MetadataSanitizer(),
+        private readonly ErrorCodeExtractor $errorCodes = new ErrorCodeExtractor(),
     ) {}
 
     /** @param Closure(Request): ?TraciumCustomer $resolver */
@@ -66,7 +71,7 @@ final class TraciumManager
 
         /** @var array<string, bool|float|int|string|null> $current */
         $current = $request->attributes->get('tracium.metadata', []);
-        $request->attributes->set('tracium.metadata', array_merge($current, $this->safeMetadata($metadata)));
+        $request->attributes->set('tracium.metadata', array_merge($current, $this->sanitizeMetadata($metadata)));
 
         return $this;
     }
@@ -84,39 +89,31 @@ final class TraciumManager
         try {
             $customer = $this->resolveCustomer($request);
             $application = $this->resolveApplication($request);
-            $status = $response?->getStatusCode() ?? 500;
             $metadata = $this->requestMetadata($request);
-
             if ($exception !== null) {
                 $metadata['exception'] = $exception::class;
             }
+            $metadata = $this->sanitizeMetadata($metadata);
 
-            $event = [
-                'event_id' => (string) Str::ulid(),
-                'occurred_at' => CarbonImmutable::now('UTC')->format('Y-m-d\TH:i:s.v\Z'),
-                'service' => (string) $this->config->get('tracium.service', 'laravel'),
-                'environment' => (string) $this->config->get('tracium.environment', 'production'),
-                'method' => strtoupper($request->method()),
-                'route' => $this->routes->normalize($request),
-                'route_name' => $this->routes->name($request),
-                'status' => $status,
-                'duration_ms' => max(0, $durationMilliseconds),
-                'request_bytes' => max(0, (int) $request->server('CONTENT_LENGTH', '0')),
-                'response_bytes' => $this->responseBytes($response),
-                'customer_id' => $customer?->id,
-                'customer_name' => $customer?->name,
-                'customer_plan' => $customer?->plan,
-                'application_id' => $application?->id,
-                'application_name' => $application?->name,
-                'api_version' => $request->header('x-api-version'),
-                'sdk' => 'laravel',
-                'sdk_version' => '0.1.0',
-                'release' => $this->config->get('tracium.release'),
-                'error_code' => $this->errorCode($request, $response),
-                'metadata' => $metadata,
-            ];
-
-            $this->transport->send([$event]);
+            $this->transport->send([$this->events->create(new EventContext(
+                service: (string) $this->config->get('tracium.service', 'laravel'),
+                environment: (string) $this->config->get('tracium.environment', 'production'),
+                method: $request->method(),
+                route: $this->routes->normalize($request),
+                routeName: $this->routes->name($request),
+                status: $response?->getStatusCode() ?? 500,
+                durationMilliseconds: $durationMilliseconds,
+                requestBytes: (int) $request->server('CONTENT_LENGTH', '0'),
+                responseBytes: $this->responseBytes($response),
+                customer: $customer,
+                application: $application,
+                apiVersion: $this->stringOrNull($request->header('x-api-version')),
+                sdk: 'laravel',
+                sdkVersion: '0.1.2',
+                release: $this->stringOrNull($this->config->get('tracium.release')),
+                errorCode: $this->errorCode($request, $response),
+                metadata: $metadata,
+            ))]);
         } catch (Throwable $throwable) {
             try {
                 if ($this->container->bound(ExceptionHandler::class)) {
@@ -177,52 +174,31 @@ final class TraciumManager
             }
         }
 
-        return $this->safeMetadata($metadata);
+        return $metadata;
     }
 
     /** @param array<string, bool|float|int|string|null> $metadata
      *  @return array<string, bool|float|int|string|null>
      */
-    private function safeMetadata(array $metadata): array
+    private function sanitizeMetadata(array $metadata): array
     {
         /** @var list<string> $allowed */
         $allowed = (array) $this->config->get('tracium.metadata_keys', []);
-        $safe = [];
 
-        foreach ($metadata as $key => $value) {
-            if (
-                str_starts_with($key, 'header.')
-                || $key === 'exception'
-                || in_array($key, $allowed, true)
-            ) {
-                $safe[mb_substr($key, 0, 120)] = is_string($value) ? mb_substr($value, 0, 1000) : $value;
-            }
-        }
-
-        return $safe;
+        return $this->metadata->sanitize($metadata, $allowed);
     }
 
     private function errorCode(Request $request, ?Response $response): ?string
     {
-        $explicit = $request->attributes->get('tracium.error_code');
-        if (is_string($explicit) && $explicit !== '') {
-            return $explicit;
-        }
-
-        if ($response === null) {
-            return null;
-        }
-
-        $content = $response->getContent();
-        if (! is_string($content) || $content === '') {
-            return null;
-        }
-
-        $decoded = json_decode($content, true);
         $path = (string) $this->config->get('tracium.error_code.json_path', 'error.code');
-        $value = is_array($decoded) ? data_get($decoded, $path) : null;
+        $explicit = $request->attributes->get('tracium.error_code');
+        $content = $response?->getContent();
 
-        return is_scalar($value) ? mb_substr((string) $value, 0, 255) : null;
+        return $this->errorCodes->extract(
+            is_string($explicit) ? $explicit : null,
+            is_string($content) ? $content : null,
+            $path,
+        );
     }
 
     private function responseBytes(?Response $response): int
@@ -245,5 +221,10 @@ final class TraciumManager
         $request = $this->container->make('request');
 
         return $request instanceof Request ? $request : null;
+    }
+
+    private function stringOrNull(mixed $value): ?string
+    {
+        return is_string($value) && $value !== '' ? $value : null;
     }
 }

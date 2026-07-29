@@ -3,6 +3,8 @@
 Fail-safe request analytics for Laravel APIs. The SDK records normalized route
 metrics and customer integration context without capturing request or response
 bodies, credentials, cookies, query strings, IP addresses, or personal data.
+The shared event contract, privacy rules and delivery primitives come from
+`tracium/php-core`, installed automatically by Composer.
 
 ## Requirements
 
