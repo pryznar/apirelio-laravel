@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Apirelio\Laravel\Transport;
 
-use Illuminate\Contracts\Bus\Dispatcher;
-use Illuminate\Contracts\Config\Repository;
 use Apirelio\Laravel\Contracts\EventTransport;
 use Apirelio\Laravel\Jobs\BufferApirelioEvents;
+use Illuminate\Contracts\Bus\Dispatcher;
+use Illuminate\Contracts\Config\Repository;
 
 final readonly class QueueTransport implements EventTransport
 {

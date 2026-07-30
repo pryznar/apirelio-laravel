@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Apirelio\Laravel\Tests;
 
+use Apirelio\Laravel\ApirelioManager;
+use Apirelio\Laravel\Contracts\EventTransport;
+use Apirelio\Laravel\Data\ApirelioApplication;
+use Apirelio\Laravel\Data\ApirelioCustomer;
+use Apirelio\Laravel\Middleware\TrackApiRequest;
+use Apirelio\Laravel\Support\RouteNormalizer;
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Apirelio\Laravel\Contracts\EventTransport;
-use Apirelio\Laravel\Data\ApirelioApplication;
-use Apirelio\Laravel\Data\ApirelioCustomer;
-use Apirelio\Laravel\Middleware\TrackApiRequest;
-use Apirelio\Laravel\Support\RouteNormalizer;
-use Apirelio\Laravel\ApirelioManager;
 
 final class ApirelioManagerTest extends TestCase
 {

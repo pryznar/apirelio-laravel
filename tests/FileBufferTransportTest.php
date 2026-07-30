@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Apirelio\Laravel\Tests;
 
+use Apirelio\Laravel\Transport\FileBufferTransport;
+use Apirelio\Laravel\Transport\HttpBatchTransport;
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Http\Client\Factory;
 use PHPUnit\Framework\TestCase;
-use Apirelio\Laravel\Transport\FileBufferTransport;
-use Apirelio\Laravel\Transport\HttpBatchTransport;
 
 final class FileBufferTransportTest extends TestCase
 {

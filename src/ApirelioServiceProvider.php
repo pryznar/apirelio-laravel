@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Apirelio\Laravel;
 
-use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Contracts\Bus\Dispatcher;
-use Illuminate\Routing\Router;
-use Illuminate\Support\ServiceProvider;
-use InvalidArgumentException;
 use Apirelio\Laravel\Contracts\EventTransport;
 use Apirelio\Laravel\Middleware\TrackApiRequest;
 use Apirelio\Laravel\Transport\FileBufferTransport;
 use Apirelio\Laravel\Transport\HttpBatchTransport;
 use Apirelio\Laravel\Transport\QueueTransport;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Routing\Router;
+use Illuminate\Support\ServiceProvider;
+use InvalidArgumentException;
 
 final class ApirelioServiceProvider extends ServiceProvider
 {

@@ -4,13 +4,6 @@ declare(strict_types=1);
 
 namespace Apirelio\Laravel;
 
-use Closure;
-use Illuminate\Contracts\Config\Repository;
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Throwable;
 use Apirelio\Core\Data\EventContext;
 use Apirelio\Core\ErrorCodeExtractor;
 use Apirelio\Core\EventFactory;
@@ -19,6 +12,13 @@ use Apirelio\Laravel\Contracts\EventTransport;
 use Apirelio\Laravel\Data\ApirelioApplication;
 use Apirelio\Laravel\Data\ApirelioCustomer;
 use Apirelio\Laravel\Support\RouteNormalizer;
+use Closure;
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 final class ApirelioManager
 {
@@ -33,9 +33,9 @@ final class ApirelioManager
         private readonly Repository $config,
         private readonly EventTransport $transport,
         private readonly RouteNormalizer $routes,
-        private readonly EventFactory $events = new EventFactory(),
-        private readonly MetadataSanitizer $metadata = new MetadataSanitizer(),
-        private readonly ErrorCodeExtractor $errorCodes = new ErrorCodeExtractor(),
+        private readonly EventFactory $events = new EventFactory,
+        private readonly MetadataSanitizer $metadata = new MetadataSanitizer,
+        private readonly ErrorCodeExtractor $errorCodes = new ErrorCodeExtractor,
     ) {}
 
     /** @param Closure(Request): ?ApirelioCustomer $resolver */
@@ -178,7 +178,7 @@ final class ApirelioManager
     }
 
     /** @param array<string, bool|float|int|string|null> $metadata
-     *  @return array<string, bool|float|int|string|null>
+     * @return array<string, bool|float|int|string|null>
      */
     private function sanitizeMetadata(array $metadata): array
     {

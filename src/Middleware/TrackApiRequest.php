@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Apirelio\Laravel\Middleware;
 
+use Apirelio\Laravel\ApirelioManager;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
-use Apirelio\Laravel\ApirelioManager;
 
 final readonly class TrackApiRequest
 {

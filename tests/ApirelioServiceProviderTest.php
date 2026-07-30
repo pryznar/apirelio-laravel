@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Apirelio\Laravel\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Apirelio\Laravel\ApirelioServiceProvider;
+use PHPUnit\Framework\TestCase;
 
 final class ApirelioServiceProviderTest extends TestCase
 {
-    public function testPackageExposesItsLaravelServiceProvider(): void
+    public function test_package_exposes_its_laravel_service_provider(): void
     {
         self::assertTrue(class_exists(ApirelioServiceProvider::class));
     }

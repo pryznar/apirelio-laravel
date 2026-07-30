@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Apirelio\Laravel\Jobs;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Apirelio\Laravel\Transport\FileBufferTransport;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 final class BufferApirelioEvents implements ShouldQueue
 {

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Apirelio\Laravel\Transport;
 
-use Illuminate\Contracts\Config\Repository;
-use Illuminate\Http\Client\Factory;
 use Apirelio\Core\Config\TransportConfig;
 use Apirelio\Laravel\Contracts\EventTransport;
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Http\Client\Factory;
 
 final class HttpBatchTransport extends \Apirelio\Core\Transport\HttpBatchTransport implements EventTransport
 {

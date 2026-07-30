@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Apirelio\Laravel\Transport;
 
-use Illuminate\Http\Client\Factory;
 use Apirelio\Core\Contracts\IngestionClient;
+use Illuminate\Http\Client\Factory;
 
 final readonly class LaravelIngestionClient implements IngestionClient
 {

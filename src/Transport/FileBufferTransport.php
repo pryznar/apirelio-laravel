@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Apirelio\Laravel\Transport;
 
-use Illuminate\Contracts\Config\Repository;
-use Illuminate\Contracts\Container\Container;
 use Apirelio\Core\Config\BufferConfig;
 use Apirelio\Laravel\Contracts\EventTransport;
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Container\Container;
 
 final class FileBufferTransport extends \Apirelio\Core\Transport\FileBufferTransport implements EventTransport
 {
