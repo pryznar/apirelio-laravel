@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tracium\Laravel\Transport;
+namespace Apirelio\Laravel\Transport;
 
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Contracts\Config\Repository;
-use Tracium\Laravel\Contracts\EventTransport;
-use Tracium\Laravel\Jobs\BufferTraciumEvents;
+use Apirelio\Laravel\Contracts\EventTransport;
+use Apirelio\Laravel\Jobs\BufferApirelioEvents;
 
 final readonly class QueueTransport implements EventTransport
 {
@@ -20,8 +20,8 @@ final readonly class QueueTransport implements EventTransport
     {
         if ($events !== []) {
             $this->dispatcher->dispatch(
-                (new BufferTraciumEvents($events))
-                    ->onQueue((string) $this->config->get('tracium.queue', 'default')),
+                (new BufferApirelioEvents($events))
+                    ->onQueue((string) $this->config->get('apirelio.queue', 'default')),
             );
         }
     }

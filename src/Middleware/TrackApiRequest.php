@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Tracium\Laravel\Middleware;
+namespace Apirelio\Laravel\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
-use Tracium\Laravel\TraciumManager;
+use Apirelio\Laravel\ApirelioManager;
 
 final readonly class TrackApiRequest
 {
-    public function __construct(private TraciumManager $tracium) {}
+    public function __construct(private ApirelioManager $apirelio) {}
 
     /** @param Closure(Request): Response $next */
     public function handle(Request $request, Closure $next): Response
@@ -22,12 +22,12 @@ final readonly class TrackApiRequest
         try {
             $response = $next($request);
         } catch (Throwable $exception) {
-            $this->tracium->capture($request, null, $this->duration($startedAt), $exception);
+            $this->apirelio->capture($request, null, $this->duration($startedAt), $exception);
 
             throw $exception;
         }
 
-        $this->tracium->capture($request, $response, $this->duration($startedAt));
+        $this->apirelio->capture($request, $response, $this->duration($startedAt));
 
         return $response;
     }

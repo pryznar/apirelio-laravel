@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tracium\Laravel\Tests;
+namespace Apirelio\Laravel\Tests;
 
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Http\Client\Factory;
 use PHPUnit\Framework\TestCase;
-use Tracium\Laravel\Transport\FileBufferTransport;
-use Tracium\Laravel\Transport\HttpBatchTransport;
+use Apirelio\Laravel\Transport\FileBufferTransport;
+use Apirelio\Laravel\Transport\HttpBatchTransport;
 
 final class FileBufferTransportTest extends TestCase
 {
@@ -23,13 +23,13 @@ final class FileBufferTransportTest extends TestCase
     {
         parent::setUp();
 
-        $this->bufferPath = sys_get_temp_dir().'/tracium-test-'.bin2hex(random_bytes(6)).'.ndjson';
+        $this->bufferPath = sys_get_temp_dir().'/apirelio-test-'.bin2hex(random_bytes(6)).'.ndjson';
         $this->container = new Container;
         Container::setInstance($this->container);
         $this->config = new Repository([
-            'tracium' => [
-                'endpoint' => 'https://ingest.tracium.test',
-                'api_key' => 'trc_live_test',
+            'apirelio' => [
+                'endpoint' => 'https://ingest.apirelio.test',
+                'api_key' => 'apr_live_test',
                 'timeout_seconds' => 2,
                 'connect_timeout_seconds' => 0.5,
                 'buffer_path' => $this->bufferPath,
@@ -69,7 +69,7 @@ final class FileBufferTransportTest extends TestCase
 
         $http->assertSentCount(1);
         $http->assertSent(
-            static fn ($request): bool => $request->url() === 'https://ingest.tracium.test/ingest/v1/events/batch'
+            static fn ($request): bool => $request->url() === 'https://ingest.apirelio.test/ingest/v1/events/batch'
                 && $request['events'][0]['event_id'] === 'event-1'
                 && $request['events'][1]['event_id'] === 'event-2',
         );

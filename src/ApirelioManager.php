@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tracium\Laravel;
+namespace Apirelio\Laravel;
 
 use Closure;
 use Illuminate\Contracts\Config\Repository;
@@ -11,21 +11,21 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
-use Tracium\Core\Data\EventContext;
-use Tracium\Core\ErrorCodeExtractor;
-use Tracium\Core\EventFactory;
-use Tracium\Core\MetadataSanitizer;
-use Tracium\Laravel\Contracts\EventTransport;
-use Tracium\Laravel\Data\TraciumApplication;
-use Tracium\Laravel\Data\TraciumCustomer;
-use Tracium\Laravel\Support\RouteNormalizer;
+use Apirelio\Core\Data\EventContext;
+use Apirelio\Core\ErrorCodeExtractor;
+use Apirelio\Core\EventFactory;
+use Apirelio\Core\MetadataSanitizer;
+use Apirelio\Laravel\Contracts\EventTransport;
+use Apirelio\Laravel\Data\ApirelioApplication;
+use Apirelio\Laravel\Data\ApirelioCustomer;
+use Apirelio\Laravel\Support\RouteNormalizer;
 
-final class TraciumManager
+final class ApirelioManager
 {
-    /** @var null|Closure(Request): ?TraciumCustomer */
+    /** @var null|Closure(Request): ?ApirelioCustomer */
     private ?Closure $customerResolver = null;
 
-    /** @var null|Closure(Request): (TraciumApplication|string|null) */
+    /** @var null|Closure(Request): (ApirelioApplication|string|null) */
     private ?Closure $applicationResolver = null;
 
     public function __construct(
@@ -38,7 +38,7 @@ final class TraciumManager
         private readonly ErrorCodeExtractor $errorCodes = new ErrorCodeExtractor(),
     ) {}
 
-    /** @param Closure(Request): ?TraciumCustomer $resolver */
+    /** @param Closure(Request): ?ApirelioCustomer $resolver */
     public function resolveCustomerUsing(Closure $resolver): self
     {
         $this->customerResolver = $resolver;
@@ -46,7 +46,7 @@ final class TraciumManager
         return $this;
     }
 
-    /** @param Closure(Request): (TraciumApplication|string|null) $resolver */
+    /** @param Closure(Request): (ApirelioApplication|string|null) $resolver */
     public function resolveApplicationUsing(Closure $resolver): self
     {
         $this->applicationResolver = $resolver;
@@ -56,7 +56,7 @@ final class TraciumManager
 
     public function setErrorCode(string $errorCode): self
     {
-        $this->request()?->attributes->set('tracium.error_code', mb_substr($errorCode, 0, 255));
+        $this->request()?->attributes->set('apirelio.error_code', mb_substr($errorCode, 0, 255));
 
         return $this;
     }
@@ -70,8 +70,8 @@ final class TraciumManager
         }
 
         /** @var array<string, bool|float|int|string|null> $current */
-        $current = $request->attributes->get('tracium.metadata', []);
-        $request->attributes->set('tracium.metadata', array_merge($current, $this->sanitizeMetadata($metadata)));
+        $current = $request->attributes->get('apirelio.metadata', []);
+        $request->attributes->set('apirelio.metadata', array_merge($current, $this->sanitizeMetadata($metadata)));
 
         return $this;
     }
@@ -96,8 +96,8 @@ final class TraciumManager
             $metadata = $this->sanitizeMetadata($metadata);
 
             $this->transport->send([$this->events->create(new EventContext(
-                service: (string) $this->config->get('tracium.service', 'laravel'),
-                environment: (string) $this->config->get('tracium.environment', 'production'),
+                service: (string) $this->config->get('apirelio.service', 'laravel'),
+                environment: (string) $this->config->get('apirelio.environment', 'production'),
                 method: $request->method(),
                 route: $this->routes->normalize($request),
                 routeName: $this->routes->name($request),
@@ -110,7 +110,7 @@ final class TraciumManager
                 apiVersion: $this->stringOrNull($request->header('x-api-version')),
                 sdk: 'laravel',
                 sdkVersion: '0.1.2',
-                release: $this->stringOrNull($this->config->get('tracium.release')),
+                release: $this->stringOrNull($this->config->get('apirelio.release')),
                 errorCode: $this->errorCode($request, $response),
                 metadata: $metadata,
             ))]);
@@ -123,32 +123,32 @@ final class TraciumManager
                 // Analytics must never break the customer request.
             }
         } finally {
-            $request->attributes->remove('tracium.error_code');
-            $request->attributes->remove('tracium.metadata');
+            $request->attributes->remove('apirelio.error_code');
+            $request->attributes->remove('apirelio.metadata');
         }
     }
 
     private function shouldCapture(Request $request): bool
     {
         if (
-            ! (bool) $this->config->get('tracium.enabled', true)
-            || (string) $this->config->get('tracium.api_key') === ''
+            ! (bool) $this->config->get('apirelio.enabled', true)
+            || (string) $this->config->get('apirelio.api_key') === ''
         ) {
             return false;
         }
 
         /** @var list<string> $paths */
-        $paths = (array) $this->config->get('tracium.paths', ['api/*']);
+        $paths = (array) $this->config->get('apirelio.paths', ['api/*']);
 
         return $request->is(...$paths);
     }
 
-    private function resolveCustomer(Request $request): ?TraciumCustomer
+    private function resolveCustomer(Request $request): ?ApirelioCustomer
     {
         return $this->customerResolver === null ? null : ($this->customerResolver)($request);
     }
 
-    private function resolveApplication(Request $request): ?TraciumApplication
+    private function resolveApplication(Request $request): ?ApirelioApplication
     {
         if ($this->applicationResolver === null) {
             return null;
@@ -156,16 +156,16 @@ final class TraciumManager
 
         $application = ($this->applicationResolver)($request);
 
-        return is_string($application) ? new TraciumApplication($application) : $application;
+        return is_string($application) ? new ApirelioApplication($application) : $application;
     }
 
     /** @return array<string, bool|float|int|string|null> */
     private function requestMetadata(Request $request): array
     {
         /** @var array<string, bool|float|int|string|null> $metadata */
-        $metadata = $request->attributes->get('tracium.metadata', []);
+        $metadata = $request->attributes->get('apirelio.metadata', []);
         /** @var list<string> $headers */
-        $headers = (array) $this->config->get('tracium.capture_headers', []);
+        $headers = (array) $this->config->get('apirelio.capture_headers', []);
 
         foreach ($headers as $header) {
             $value = $request->header($header);
@@ -183,15 +183,15 @@ final class TraciumManager
     private function sanitizeMetadata(array $metadata): array
     {
         /** @var list<string> $allowed */
-        $allowed = (array) $this->config->get('tracium.metadata_keys', []);
+        $allowed = (array) $this->config->get('apirelio.metadata_keys', []);
 
         return $this->metadata->sanitize($metadata, $allowed);
     }
 
     private function errorCode(Request $request, ?Response $response): ?string
     {
-        $path = (string) $this->config->get('tracium.error_code.json_path', 'error.code');
-        $explicit = $request->attributes->get('tracium.error_code');
+        $path = (string) $this->config->get('apirelio.error_code.json_path', 'error.code');
+        $explicit = $request->attributes->get('apirelio.error_code');
         $content = $response?->getContent();
 
         return $this->errorCodes->extract(

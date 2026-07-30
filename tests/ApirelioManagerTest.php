@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tracium\Laravel\Tests;
+namespace Apirelio\Laravel\Tests;
 
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
@@ -10,14 +10,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Tracium\Laravel\Contracts\EventTransport;
-use Tracium\Laravel\Data\TraciumApplication;
-use Tracium\Laravel\Data\TraciumCustomer;
-use Tracium\Laravel\Middleware\TrackApiRequest;
-use Tracium\Laravel\Support\RouteNormalizer;
-use Tracium\Laravel\TraciumManager;
+use Apirelio\Laravel\Contracts\EventTransport;
+use Apirelio\Laravel\Data\ApirelioApplication;
+use Apirelio\Laravel\Data\ApirelioCustomer;
+use Apirelio\Laravel\Middleware\TrackApiRequest;
+use Apirelio\Laravel\Support\RouteNormalizer;
+use Apirelio\Laravel\ApirelioManager;
 
-final class TraciumManagerTest extends TestCase
+final class ApirelioManagerTest extends TestCase
 {
     private Container $container;
 
@@ -30,9 +30,9 @@ final class TraciumManagerTest extends TestCase
         $this->container = new Container;
         Container::setInstance($this->container);
         $this->config = new Repository([
-            'tracium' => [
+            'apirelio' => [
                 'enabled' => true,
-                'api_key' => 'trc_live_test',
+                'api_key' => 'apr_live_test',
                 'service' => 'billing-api',
                 'environment' => 'production',
                 'release' => '2026.07.29.1',
@@ -54,7 +54,7 @@ final class TraciumManagerTest extends TestCase
     public function test_manager_builds_a_safe_normalized_request_event(): void
     {
         $transport = new CapturingTransport;
-        $manager = new TraciumManager(
+        $manager = new ApirelioManager(
             $this->container,
             $this->config,
             $transport,
@@ -73,10 +73,10 @@ final class TraciumManagerTest extends TestCase
 
         $manager
             ->resolveCustomerUsing(
-                static fn (): TraciumCustomer => new TraciumCustomer('company_128', 'Acme', 'growth'),
+                static fn (): ApirelioCustomer => new ApirelioCustomer('company_128', 'Acme', 'growth'),
             )
             ->resolveApplicationUsing(
-                static fn (): TraciumApplication => new TraciumApplication('integration_42', 'ERP'),
+                static fn (): ApirelioApplication => new ApirelioApplication('integration_42', 'ERP'),
             )
             ->addMetadata(['region' => 'eu-central', 'password' => 'not-allowed'])
             ->setErrorCode('MISSING_RECIPIENT');
@@ -104,7 +104,7 @@ final class TraciumManagerTest extends TestCase
 
     public function test_middleware_never_breaks_request_when_transport_fails(): void
     {
-        $manager = new TraciumManager(
+        $manager = new ApirelioManager(
             $this->container,
             $this->config,
             new ThrowingTransport,

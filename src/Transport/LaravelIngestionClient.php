@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tracium\Laravel\Transport;
+namespace Apirelio\Laravel\Transport;
 
 use Illuminate\Http\Client\Factory;
-use Tracium\Core\Contracts\IngestionClient;
+use Apirelio\Core\Contracts\IngestionClient;
 
 final readonly class LaravelIngestionClient implements IngestionClient
 {

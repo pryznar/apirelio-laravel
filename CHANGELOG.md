@@ -1,10 +1,16 @@
 # Changelog
 
-All notable changes to `tracium/laravel` are documented here.
+All notable changes to `apirelio/laravel` are documented here.
+
+## 0.2.0
+
+- Rebrand the package, namespace, middleware and configuration to Apirelio.
+- Require the new `apirelio/php-core` package.
+- Replace `TRACIUM_*` configuration with `APIRELIO_*`.
 
 ## 0.1.2
 
-- Use `tracium/php-core` for the shared event contract, privacy rules, error
+- Use `apirelio/php-core` for the shared event contract, privacy rules, error
   extraction, HTTP retries and local buffering.
 - Preserve the existing Laravel data objects and transport contracts.
 
@@ -16,4 +22,4 @@ All notable changes to `tracium/laravel` are documented here.
 
 ## 0.1.0
 
-- Initial Tracium Laravel SDK release.
+- Initial Apirelio Laravel SDK release.

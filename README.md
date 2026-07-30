@@ -1,10 +1,10 @@
-# Tracium Laravel SDK
+# Apirelio Laravel SDK
 
 Fail-safe request analytics for Laravel APIs. The SDK records normalized route
 metrics and customer integration context without capturing request or response
 bodies, credentials, cookies, query strings, IP addresses, or personal data.
 The shared event contract, privacy rules and delivery primitives come from
-`tracium/php-core`, installed automatically by Composer.
+`apirelio/php-core`, installed automatically by Composer.
 
 ## Requirements
 
@@ -14,20 +14,20 @@ The shared event contract, privacy rules and delivery primitives come from
 ## Installation
 
 ```bash
-composer require tracium/laravel:^0.1
-php artisan vendor:publish --tag=tracium-config
+composer require apirelio/laravel:^0.2
+php artisan vendor:publish --tag=apirelio-config
 ```
 
-Configure the project key shown once in the Tracium dashboard:
+Configure the project key shown once in the Apirelio dashboard:
 
 ```dotenv
-TRACIUM_ENABLED=true
-TRACIUM_ENDPOINT=https://ingest.tracium.example
-TRACIUM_API_KEY=trc_live_xxxxxxxxx
-TRACIUM_SERVICE=billing-api
-TRACIUM_ENVIRONMENT=production
-TRACIUM_RELEASE=2026.07.29.1
-TRACIUM_TRANSPORT=queue
+APIRELIO_ENABLED=true
+APIRELIO_ENDPOINT=https://api.apirelio.com
+APIRELIO_API_KEY=apr_live_xxxxxxxxx
+APIRELIO_SERVICE=billing-api
+APIRELIO_ENVIRONMENT=production
+APIRELIO_RELEASE=2026.07.29.1
+APIRELIO_TRANSPORT=queue
 ```
 
 The production `queue` transport keeps network activity outside customer
@@ -43,7 +43,7 @@ php artisan schedule:work
 Attach the middleware alias to API routes:
 
 ```php
-Route::middleware(['auth:sanctum', 'tracium'])->group(function (): void {
+Route::middleware(['auth:sanctum', 'apirelio'])->group(function (): void {
     Route::post('/invoices/{invoice}/send', SendInvoiceController::class);
 });
 ```
@@ -51,12 +51,12 @@ Route::middleware(['auth:sanctum', 'tracium'])->group(function (): void {
 Or use the class directly:
 
 ```php
-use Tracium\Laravel\Middleware\TrackApiRequest;
+use Apirelio\Laravel\Middleware\TrackApiRequest;
 
 Route::middleware(TrackApiRequest::class)->group(/* ... */);
 ```
 
-Only paths allowed by `tracium.paths` are recorded. Laravel route templates are
+Only paths allowed by `apirelio.paths` are recorded. Laravel route templates are
 used instead of concrete URLs, so `/invoices/123` becomes
 `/invoices/{invoice}` and query strings are never sent.
 
@@ -66,17 +66,17 @@ Register resolvers in an application service provider:
 
 ```php
 use Illuminate\Http\Request;
-use Tracium\Laravel\Data\TraciumApplication;
-use Tracium\Laravel\Data\TraciumCustomer;
-use Tracium\Laravel\Facades\Tracium;
+use Apirelio\Laravel\Data\ApirelioApplication;
+use Apirelio\Laravel\Data\ApirelioCustomer;
+use Apirelio\Laravel\Facades\Apirelio;
 
-Tracium::resolveCustomerUsing(
-    static function (Request $request): ?TraciumCustomer {
+Apirelio::resolveCustomerUsing(
+    static function (Request $request): ?ApirelioCustomer {
         $client = $request->user();
 
         return $client === null
             ? null
-            : new TraciumCustomer(
+            : new ApirelioCustomer(
                 id: (string) $client->company_id,
                 name: $client->company->name,
                 plan: $client->company->plan,
@@ -84,11 +84,11 @@ Tracium::resolveCustomerUsing(
     },
 );
 
-Tracium::resolveApplicationUsing(
-    static fn (Request $request): ?TraciumApplication =>
+Apirelio::resolveApplicationUsing(
+    static fn (Request $request): ?ApirelioApplication =>
         $request->user()?->api_client_id === null
             ? null
-            : new TraciumApplication(
+            : new ApirelioApplication(
                 id: (string) $request->user()->api_client_id,
                 name: 'ERP connector',
             ),
@@ -101,17 +101,17 @@ JSON error codes are read from `error.code` by default. Override a code during
 the current request when needed:
 
 ```php
-Tracium::setErrorCode('INVALID_CURRENCY');
+Apirelio::setErrorCode('INVALID_CURRENCY');
 ```
 
-Custom metadata is allow-listed in `config/tracium.php`:
+Custom metadata is allow-listed in `config/apirelio.php`:
 
 ```php
 'metadata_keys' => ['integration_type', 'region'],
 ```
 
 ```php
-Tracium::addMetadata([
+Apirelio::addMetadata([
     'integration_type' => 'accounting',
     'region' => 'eu-central',
 ]);
@@ -128,10 +128,10 @@ Values must be scalar. Unlisted keys are discarded.
   the scheduler.
 
 ```dotenv
-TRACIUM_BATCH_SIZE=500
-TRACIUM_FLUSH_INTERVAL_SECONDS=10
-TRACIUM_TIMEOUT_SECONDS=2
-TRACIUM_CONNECT_TIMEOUT_SECONDS=0.5
+APIRELIO_BATCH_SIZE=500
+APIRELIO_FLUSH_INTERVAL_SECONDS=10
+APIRELIO_TIMEOUT_SECONDS=2
+APIRELIO_CONNECT_TIMEOUT_SECONDS=0.5
 ```
 
 Transport and resolver failures are caught by the SDK. Analytics may lose an

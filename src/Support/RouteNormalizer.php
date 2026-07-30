@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tracium\Laravel\Support;
+namespace Apirelio\Laravel\Support;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;

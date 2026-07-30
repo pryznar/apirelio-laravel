@@ -1,7 +1,7 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "tracium/laravel",
-    "description": "Fail-safe Laravel SDK for Tracium customer integration analytics.",
+    "name": "apirelio/laravel",
+    "description": "Fail-safe Laravel SDK for Apirelio customer integration analytics.",
     "type": "library",
     "license": "MIT",
     "require": {
@@ -11,7 +11,7 @@
         "illuminate/http": "^11.0 || ^12.0",
         "illuminate/routing": "^11.0 || ^12.0",
         "illuminate/support": "^11.0 || ^12.0",
-        "tracium/php-core": "^0.1"
+        "apirelio/php-core": "^0.2"
     },
     "require-dev": {
         "phpstan/phpstan": "^2.1",
@@ -19,18 +19,18 @@
     },
     "autoload": {
         "psr-4": {
-            "Tracium\\Laravel\\": "src/"
+            "Apirelio\\Laravel\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tracium\\Laravel\\Tests\\": "tests/"
+            "Apirelio\\Laravel\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Tracium\\Laravel\\TraciumServiceProvider"
+                "Apirelio\\Laravel\\ApirelioServiceProvider"
             ]
         }
     },
@@ -48,7 +48,7 @@
             "options": {
                 "symlink": true,
                 "versions": {
-                    "tracium/php-core": "0.1.0"
+                    "apirelio/php-core": "0.2.0"
                 }
             }
         }

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tracium\Laravel\Jobs;
+namespace Apirelio\Laravel\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Tracium\Laravel\Transport\FileBufferTransport;
+use Apirelio\Laravel\Transport\FileBufferTransport;
 
-final class BufferTraciumEvents implements ShouldQueue
+final class BufferApirelioEvents implements ShouldQueue
 {
     public int $tries = 3;
 
