@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 return [
     'enabled' => env('APIRELIO_ENABLED', true),
-    'endpoint' => env('APIRELIO_ENDPOINT', 'https://api.apirelio.com'),
+    'endpoint' => env('APIRELIO_ENDPOINT', 'https://apirelio.com'),
     'api_key' => env('APIRELIO_API_KEY'),
     'service' => env('APIRELIO_SERVICE', env('APP_NAME', 'laravel')),
     'environment' => env('APIRELIO_ENVIRONMENT', env('APP_ENV', 'production')),

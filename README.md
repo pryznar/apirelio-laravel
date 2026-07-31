@@ -22,7 +22,7 @@ Configure the project key shown once in the Apirelio dashboard:
 
 ```dotenv
 APIRELIO_ENABLED=true
-APIRELIO_ENDPOINT=https://api.apirelio.com
+APIRELIO_ENDPOINT=https://apirelio.com
 APIRELIO_API_KEY=apr_live_xxxxxxxxx
 APIRELIO_SERVICE=billing-api
 APIRELIO_ENVIRONMENT=production

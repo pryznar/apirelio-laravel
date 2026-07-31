@@ -2,6 +2,10 @@
 
 All notable changes to `apirelio/laravel` are documented here.
 
+## 0.2.1
+
+- Use the active `https://apirelio.com` ingestion endpoint by default.
+
 ## 0.2.0
 
 - Rebrand the package, namespace, middleware and configuration to Apirelio.

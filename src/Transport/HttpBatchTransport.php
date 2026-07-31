@@ -18,7 +18,7 @@ final class HttpBatchTransport extends \Apirelio\Core\Transport\HttpBatchTranspo
         parent::__construct(
             new LaravelIngestionClient($http),
             new TransportConfig(
-                endpoint: (string) $config->get('apirelio.endpoint', 'https://api.apirelio.com'),
+                endpoint: (string) $config->get('apirelio.endpoint', 'https://apirelio.com'),
                 apiKey: (string) $config->get('apirelio.api_key', ''),
                 timeoutSeconds: (float) $config->get('apirelio.timeout_seconds', 2),
                 connectTimeoutSeconds: (float) $config->get('apirelio.connect_timeout_seconds', 0.5),
