@@ -1,5 +1,9 @@
 # Apirelio Laravel SDK
 
+[Documentation](https://apirelio.com/docs/php/laravel) · [Packagist](https://packagist.org/packages/apirelio/laravel) · [Apirelio](https://apirelio.com)
+
+> Connect Laravel API errors, latency and releases to the affected customers without capturing request or response payloads.
+
 Fail-safe request analytics for Laravel APIs. The SDK records normalized route
 metrics and customer integration context without capturing request or response
 bodies, credentials, cookies, query strings, IP addresses, or personal data.
