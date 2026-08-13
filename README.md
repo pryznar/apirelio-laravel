@@ -1,5 +1,26 @@
 # Apirelio Laravel SDK
 
+[![Packagist](https://img.shields.io/packagist/v/apirelio/laravel?style=flat-square&logo=packagist)](https://packagist.org/packages/apirelio/laravel)
+[![Live demo](https://img.shields.io/badge/live_demo-explore-8EF0B5?style=flat-square&logo=googlechrome&logoColor=0B0E10)](https://apirelio.com/demo?utm_source=github&utm_medium=readme&utm_campaign=laravel)
+
+## See the customer behind every API request
+
+[![Apirelio live demo dashboard](https://apirelio.com/img/apirelio-live-demo-dashboard.jpg)](https://apirelio.com/demo?utm_source=github&utm_medium=readme&utm_campaign=laravel)
+
+Follow a release regression from the failing endpoint to the exact customer accounts it affects in the public, read-only workspace.
+
+**[Explore the live demo →](https://apirelio.com/demo?utm_source=github&utm_medium=readme&utm_campaign=laravel)**
+
+## Try it in 30 seconds
+
+```bash
+composer require apirelio/laravel
+export APIRELIO_API_KEY=apr_live_your_project_key
+```
+
+Copy the minimal setup below or run the [quickstart example](./examples/quickstart). Delivery is fail-safe and no request or response payloads are captured.
+
+
 [Documentation](https://apirelio.com/docs/php/laravel) · [Packagist](https://packagist.org/packages/apirelio/laravel) · [Apirelio](https://apirelio.com)
 
 > Connect Laravel API errors, latency and releases to the affected customers without capturing request or response payloads.
