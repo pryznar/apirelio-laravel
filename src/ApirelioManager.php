@@ -109,7 +109,7 @@ final class ApirelioManager
                 application: $application,
                 apiVersion: $this->stringOrNull($request->header('x-api-version')),
                 sdk: 'laravel',
-                sdkVersion: '0.1.2',
+                sdkVersion: '1.0.0',
                 release: $this->stringOrNull($this->config->get('apirelio.release')),
                 errorCode: $this->errorCode($request, $response),
                 metadata: $metadata,

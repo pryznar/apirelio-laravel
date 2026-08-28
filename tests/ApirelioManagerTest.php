@@ -92,6 +92,7 @@ final class ApirelioManagerTest extends TestCase
         self::assertSame('/api/invoices/{id}', $event['route']);
         self::assertSame('company_128', $event['customer_id']);
         self::assertSame('integration_42', $event['application_id']);
+        self::assertSame('1.0.0', $event['sdk_version']);
         self::assertSame('MISSING_RECIPIENT', $event['error_code']);
         self::assertSame(814, $event['request_bytes']);
         self::assertSame([
