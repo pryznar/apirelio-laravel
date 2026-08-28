@@ -2,6 +2,13 @@
 
 All notable changes to `apirelio/laravel` are documented here.
 
+## 1.0.0 - 2026-08-28
+
+- Publish the first stable Laravel SDK on PHP Core 1.x.
+- Add support for Laravel 13 on PHP 8.3 and newer.
+- Test supported combinations through PHP 8.5 and PHPUnit 13.
+- Report the published SDK version in telemetry.
+
 ## 0.2.1
 
 - Use the active `https://apirelio.com` ingestion endpoint by default.

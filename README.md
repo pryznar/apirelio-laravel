@@ -33,13 +33,13 @@ The shared event contract, privacy rules and delivery primitives come from
 
 ## Requirements
 
-- PHP 8.2, 8.3 or 8.4
-- Laravel 11 or 12
+- PHP 8.2+
+- Laravel 11, 12 or 13
 
 ## Installation
 
 ```bash
-composer require apirelio/laravel:^0.2
+composer require apirelio/laravel:^1.0
 php artisan vendor:publish --tag=apirelio-config
 ```
 
